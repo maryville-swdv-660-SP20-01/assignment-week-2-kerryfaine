@@ -17,7 +17,7 @@ class GameApiViewTests( TestCase ):
             'letters_guessed': ['A'],
             'guessed_word_state': ['', 'A'],
             'is_game_over': False,
-            'id': None
+            'id': 5
         }
 
         self.mock_game = Game(
@@ -26,8 +26,10 @@ class GameApiViewTests( TestCase ):
                 guesses_taken = self.expected_game_data['guesses_taken'],
                 letters_guessed = self.expected_game_data['letters_guessed'],
                 guessed_word_state = self.expected_game_data['guessed_word_state'],
-                is_game_over = self.expected_game_data['is_game_over']
+                is_game_over = self.expected_game_data['is_game_over'],
+                id = self.expected_game_data['id']
             )
+
 
         self.request_factory = APIRequestFactory()
         self.mock_get_request = self.request_factory.get('dummy')
@@ -69,7 +71,28 @@ class GameApiViewTests( TestCase ):
 
 
     ### GET solution view
-    # TODO: Add tests for Getting a game's solution
-    # HINT: remember the `setUp` fixture that is in this test class, 
-    #   it constructs things that might be useful
+    def test_get_solution_not_found_if_id_invalid(self):
+        with patch.object(Game.objects, 'get') as mock_get:
+            mock_get.side_effect = Game.DoesNotExist
+            response = game_solution(self.mock_get_request, 25)
+            
+            mock_get.assert_called_with( pk=25)
+            self.assertEqual(response.status_code, 404)
+
+    def test_get_solution_return_valid_solution(self):
+         with patch.object(Game.objects, 'get') as mock_get:
+            mock_get.return_value = self.mock_game
+            response = game_solution(self.mock_get_request, 5) 
+
+            mock_get.assert_called_with( pk=5 )
+            self.assertEquals(response.status_code, 200)
+
+            expected_game_solution = {'solution': 'TESTWORD'}
+
+            print(response.data)
+            print(expected_game_solution)
+            self.assertDictEqual( response.data, expected_game_solution)
+
+
+
 
