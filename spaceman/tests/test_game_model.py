@@ -155,18 +155,52 @@ class GameModelTests( TestCase ):
         self.assertEquals( game.letters_guessed, expectedLettersGuessed )
 
     ### is_game_over field
-    # TODO: add tests
-    # HINT: considering adding a fixture or other widely scoped variables if you feel ]hat will
-    #  make this easier
-
     def test_is_game_over_is_false_if_guesses_left( self ):
-        pass
+        game = Game(
+            word='TESTWORD',
+            guessed_word_state= ['','','S','','W','O','R',''],
+            guesses_allowed=10,
+            guesses_taken= 5
+        )
+
+        guess = 'Q'
+        game.handleGuess(guess)
+        self.assertEquals(False, game.is_game_over)
 
     def test_is_game_over_is_false_if_not_all_letters_guessed( self ):
-        pass
+        game = Game(
+            word='TESTWORD',
+            guessed_word_state = ['','','','','','O','R',''],
+            letters_guessed = ['','','','','','O','R',''],
+            guesses_allowed=10,
+            guesses_taken= 5
+        )
+
+        guess = 'D'
+        game.handleGuess(guess)
+        self.assertEquals(False, game.is_game_over)
 
     def test_is_game_over_is_true_if_no_guesses_left( self ):
-        pass
+        game = Game(
+            word='TESTWORD',
+            guessed_word_state= ['','','S','','W','O','R',''],
+            guesses_allowed=10,
+            guesses_taken= 9
+        )
+
+        guess = 'Q'
+        game.handleGuess(guess)
+        self.assertEquals(True, game.is_game_over)
 
     def test_is_game_over_is_true_if_all_letters_guessed( self ):
-        pass
+        game = Game(
+            word='TESTWORD',
+            guessed_word_state= ['T','E','S','T','W','O','R',''],
+            letters_guessed= ['T','E','S','T','W','O','R',''],
+            guesses_allowed=10,
+            guesses_taken= 5
+        )
+
+        guess = 'D'
+        game.handleGuess(guess)
+        self.assertEquals(True, game.is_game_over)
